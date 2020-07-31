@@ -73,12 +73,12 @@ Config *read_config() {
     }
 
     if (config->ON_TEMP >= 85) {
-        syslog(LOG_WARN, "On threshold is higher than max temp for Raspberry Pi! Resetting to 80°C.");
+        syslog(LOG_WARNING, "On threshold is higher than max temp for Raspberry Pi! Resetting to 80°C.");
         config ->ON_TEMP = 80;
     }
 
     if (config->ON_TEMP <= config->OFF_TEMP) {
-        syslog(LOG_WARN, "On threshold cannot be less than or equal to off threshold!");
+        syslog(LOG_WARNING, "On threshold cannot be less than or equal to off threshold!");
         config->OFF_TEMP = config->ON_TEMP - 5;
     }
 
