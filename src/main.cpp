@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <syslog.h>
+#include <unistd.h>
 
 #include "config.hpp"
 #include "gpio.hpp"
@@ -28,6 +29,18 @@ int main(int argc, char *argv[]) {
     }
 
     while (!signal_handler->killed()) {
+        int cpu_temp = RPiFanController::get_cpu_temp();
+        
+        if (cpu_temp >= config->ON_TEMP) {
+            syslog(LOG_NOTICE, "CPU temperature (%d°C) exceeded threshold %d°C. Turning on fan!", cpu_temp, config->ON_TEMP);
+            gpio->high();
+        }
+
+        if (cpu_temp <= config->OFF_TEMP) {
+            syslog(LOG_NOTICE, "CPU temperature (%d°C) decreased below threshold %d°C. Turning off fan!", cpu_temp, config->OFF_TEMP);
+            gpio->low();
+        }
+
         sleep(config->INTERVAL);
     }
 
