@@ -2,8 +2,7 @@
 #include <syslog.h>
 
 #include "config.hpp"
-
-#define DAEMON_NAME "fcdaemon"
+#include "main.hpp"
 
 using namespace std;
 
