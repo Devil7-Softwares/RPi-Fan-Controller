@@ -8,6 +8,7 @@ using namespace std;
 namespace RPiFanController {
 
 const char *gpio_export_path = "/sys/class/gpio/export";
+const char *gpio_unexport_path = "/sys/class/gpio/unexport";
 const char *gpio_direction_path = "/sys/class/gpio/gpio%d/direction";
 const char *gpio_value_path = "/sys/class/gpio/gpio%d/value";
 
@@ -20,7 +21,7 @@ bool enable(int pin) {
         ofstream node(gpio_export_path);
 
         if (node) {
-            node << "out";
+            node << pin;
         } else {
             syslog(LOG_CRIT, "Error writing to %s", gpio_export_path);
             return false;
@@ -31,6 +32,26 @@ bool enable(int pin) {
         return true;
     } catch (...) {
         syslog(LOG_CRIT, "Unhandled error on enabling pin!");
+        return false;
+    }
+}
+
+bool disable(int pin) {
+    try {
+        ofstream node(gpio_unexport_path);
+
+        if (node) {
+            node << pin;
+        } else {
+            syslog(LOG_CRIT, "Error writing to %s", gpio_unexport_path);
+            return false;
+        }
+
+        node.close();
+
+        return true;
+    } catch (...) {
+        syslog(LOG_CRIT, "Unhandled error on disabling pin!");
         return false;
     }
 }
@@ -93,6 +114,10 @@ bool GPIO::high() {
 
 bool GPIO::low() {
     return write(pin, 0);
+}
+
+bool GPIO::close() {
+    return disable(pin);
 }
 
 } // namespace RPiFanController

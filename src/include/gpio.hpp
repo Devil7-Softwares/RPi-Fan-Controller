@@ -9,6 +9,7 @@ class GPIO {
     bool init();
     bool high();
     bool low();
+    bool close();
 
   private:
     int pin;
