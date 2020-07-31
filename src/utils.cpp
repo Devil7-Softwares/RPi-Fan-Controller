@@ -1,4 +1,6 @@
+#include <errno.h>
 #include <fstream>
+#include <signal.h>
 #include <sstream>
 #include <syslog.h>
 
@@ -29,6 +31,25 @@ int get_cpu_temp() {
         syslog(LOG_CRIT, "Failed to get CPU temperature!");
         return -1;
     }
+}
+
+bool SignalHandler::_killed = false;
+
+bool SignalHandler::hook() {
+    if (signal((int)SIGINT, SignalHandler::signal_handler) == SIG_ERR) {
+        syslog(LOG_CRIT, "Failed to setup signal handler!");
+        return false;
+    } else {
+        return true;
+    }
+}
+
+bool SignalHandler::killed() {
+    return _killed;
+}
+
+void SignalHandler::signal_handler(int _ignored) {
+    _killed = true;
 }
 
 } // namespace RPiFanController
