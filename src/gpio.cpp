@@ -1,4 +1,5 @@
 #include <fstream>
+#include <sstream>
 #include <syslog.h>
 
 #include "gpio.hpp"
@@ -80,6 +81,31 @@ bool set_output(int pin) {
     }
 }
 
+bool read(int pin) {
+    try {
+        char *path = new char[35];
+
+        sprintf(path, gpio_value_path, pin);
+
+        const char *value_str = "0";
+
+        ifstream node(path);
+        if (node.is_open()) {
+            ostringstream value_stream;
+            value_stream << node.rdbuf();
+            value_str = value_stream.str().c_str();
+            node.close();
+        } else {
+            syslog(LOG_CRIT, "Failed to open %s", path);
+        }
+
+        return stoi(value_str);
+    } catch (...) {
+        syslog(LOG_CRIT, "Failed to value of gpio pin!");
+        return 0;
+    }
+}
+
 bool write(int pin, int value) {
     try {
         char *path = new char[35];
@@ -106,6 +132,10 @@ bool write(int pin, int value) {
 
 bool GPIO::init() {
     return enable(pin) && set_output(pin);
+}
+
+bool GPIO::is_high() {
+    return read(pin) == 1;
 }
 
 bool GPIO::high() {

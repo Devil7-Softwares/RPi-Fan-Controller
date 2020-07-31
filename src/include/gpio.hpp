@@ -7,6 +7,7 @@ class GPIO {
   public:
     GPIO(int);
     bool init();
+    bool is_high();
     bool high();
     bool low();
     bool close();
