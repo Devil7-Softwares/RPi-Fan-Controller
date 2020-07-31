@@ -26,7 +26,7 @@ Config *read_config() {
 
     try {
         if (filesystem::exists(config_path)) {
-            syslog(LOG_NOTICE, "Reading Configuration...");
+            syslog(LOG_INFO, "Reading Configuration...");
 
             string line;
             ifstream config_file(config_path);
@@ -56,6 +56,8 @@ Config *read_config() {
             } else {
                 syslog(LOG_ERR, "Failed to open configuration file!");
             }
+
+            syslog(LOG_INFO, "Configuration loaded!");
         } else {
             syslog(LOG_NOTICE, "Configuration file doesn't exist! Creating one with default values...");
 
