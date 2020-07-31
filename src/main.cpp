@@ -2,6 +2,7 @@
 #include <syslog.h>
 
 #include "config.hpp"
+#include "gpio.hpp"
 #include "main.hpp"
 
 using namespace std;
@@ -12,7 +13,13 @@ int main(int argc, char *argv[]) {
     openlog(DAEMON_NAME, LOG_CONS | LOG_PID | LOG_NDELAY, LOG_DAEMON); // For more info: https://linux.die.net/man/3/syslog
 
     syslog(LOG_NOTICE, "RPi fan controller daemon started!");
-    RPiFanController::read_config();
+    RPiFanController::Config *config = RPiFanController::read_config();
+    RPiFanController::GPIO *gpio = new RPiFanController::GPIO(config->GPIO_PIN);
+
+    if (!gpio->init()) {
+        syslog(LOG_CRIT, "GPIO initialization failed!");
+        return (EXIT_FAILURE);
+    }
 
     syslog(LOG_NOTICE, "RPi fan controller daemon stopped!");
 
