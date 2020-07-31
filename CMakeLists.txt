@@ -5,3 +5,5 @@ file(GLOB_RECURSE FC_SOURCES "src/*.cpp")
 
 include_directories("src/include")
 add_executable(fancontrold ${FC_SOURCES})
+
+target_compile_features(fancontrold PRIVATE cxx_std_17)
