@@ -4,6 +4,7 @@
 #include "config.hpp"
 #include "gpio.hpp"
 #include "main.hpp"
+#include "utils.hpp"
 
 using namespace std;
 
@@ -20,6 +21,17 @@ int main(int argc, char *argv[]) {
         syslog(LOG_CRIT, "GPIO initialization failed!");
         return (EXIT_FAILURE);
     }
+
+    RPiFanController::SignalHandler *signal_handler;
+    if (!signal_handler->hook()) {
+        return (EXIT_FAILURE);
+    }
+
+    while (!signal_handler->killed()) {
+        sleep(config->INTERVAL);
+    }
+
+    gpio->close();
 
     syslog(LOG_NOTICE, "RPi fan controller daemon stopped!");
 
