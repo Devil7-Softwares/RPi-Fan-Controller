@@ -5,6 +5,8 @@ namespace RPiFanController {
 
 int get_cpu_temp();
 
+void init_daemon();
+
 class SignalHandler {
   public:
     static bool hook();
