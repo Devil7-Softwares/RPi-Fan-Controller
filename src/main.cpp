@@ -5,6 +5,7 @@
 #include "config.hpp"
 #include "gpio.hpp"
 #include "main.hpp"
+#include "plock.hpp"
 #include "utils.hpp"
 
 using namespace std;
@@ -16,6 +17,9 @@ int main(int argc, char *argv[]) {
 
     syslog(LOG_NOTICE, "Creating daemon process for RPi fan controller!");
     RPiFanController::init_daemon();
+
+    syslog(LOG_INFO, "Creating process lock for RPi fan contoller service!");
+    RPiFanController::lock();
 
     syslog(LOG_NOTICE, "RPi fan controller daemon started!");
     RPiFanController::Config *config = RPiFanController::read_config();
@@ -48,6 +52,9 @@ int main(int argc, char *argv[]) {
     }
 
     gpio->close();
+
+    syslog(LOG_INFO, "Releasing process lock for RPi fan controller service!");
+    RPiFanController::release();
 
     syslog(LOG_NOTICE, "RPi fan controller daemon stopped!");
 
