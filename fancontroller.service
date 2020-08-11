@@ -1,0 +1,11 @@
+[Unit]
+Description=Fan Controller for Raspberry Pi
+
+[Service]
+Type=forking
+PIDFile=/run/fancontroller.pid
+ExecStart=/usr/bin/fancontrollerd
+ExecReload=/bin/kill -HUP $MAINPID
+
+[Install]
+WantedBy=multi-user.target
