@@ -92,7 +92,10 @@ bool SignalHandler::_killed = false;
 
 bool SignalHandler::hook() {
     if (signal((int)SIGINT, SignalHandler::signal_handler) == SIG_ERR) {
-        syslog(LOG_CRIT, "Failed to setup signal handler!");
+        syslog(LOG_CRIT, "Failed to setup SIGINT signal handler!");
+        return false;
+    } else if (signal((int)SIGTERM, SignalHandler::signal_handler) == SIG_ERR) {
+        syslog(LOG_CRIT, "Failed to setup SIGTERM signal handler!");
         return false;
     } else {
         return true;
